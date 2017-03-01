@@ -15,14 +15,14 @@ limitations under the License.
 package main
 
 import (
-       "os"
+	"os"
 
-       "github.com/vessel/cmd/app"
+	"github.com/vessel/cmd/app"
 )
 
 func main() {
-     if err := app.Run(); err != nil {
-           os.Exit(1)
-     }
-     os.Exit(0)
+	if err := app.Run(); err != nil {
+		os.Exit(1)
+	}
+	os.Exit(0)
 }

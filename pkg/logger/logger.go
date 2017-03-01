@@ -1,36 +1,34 @@
-package test
+package logger
 
 import (
-    "io"
-    "log"
-    "os"
+	"io"
+	"log"
+	"os"
 )
 
+func Error(err string) {
+	errorHandle := io.Writer(os.Stderr)
 
-func init() {
-     NewLogger()
+	Err := log.New(errorHandle,
+		"ERROR: ",
+		log.Ltime|log.Lshortfile)
+	Err.Println(err)
 }
 
-type Logger struct {
-    Info *log.Logger
-    Warning *log.Logger
-    Error *log.Logger
+func Warning(err string) {
+	warningHandle := io.Writer(os.Stdout)
+
+	Warn := log.New(warningHandle,
+		"WARNING: ",
+		log.Lshortfile)
+	Warn.Println(err)
 }
 
-func NewLogger() *Logger {
-    infoHandle := io.Writer(os.Stdout)
-    warningHandle := io.Writer(os.Stdout)
-    errorHandle := io.Writer(os.Stderr)
+func Info(err string) {
+	infoHandle := io.Writer(os.Stdout)
 
-    info := log.New(infoHandle,
-        "INFO: ",
-        log.Lshortfile)
-    warning := log.New(warningHandle,
-        "WARNING: ",
-        log.Lshortfile)
-    error := log.New(errorHandle,
-        "Error: ",
-        log.Ltime|log.Lshortfile)
-
-    return &Logger{Info: info, Warning: warning, Error: error}
+	Information := log.New(infoHandle,
+		"INFO: ",
+		log.Lshortfile)
+	Information.Println(err)
 }

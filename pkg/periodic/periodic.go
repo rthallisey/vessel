@@ -31,13 +31,10 @@ func SleepTime(t time.Duration, unit string) {
 }
 
 // Create a PeriodicJob that runs every T units of time
-func (p PeriodicJob) LanuchPeriodicJob(masterswitch chan bool) {
+func (p PeriodicJob) LanuchPeriodicJob() {
 	go func() {
 		for {
 			select {
-			case <-masterswitch:
-				Info.Print("Main Loop has exited")
-				return
 			case <-p.Finish:
 				Info.Print("Exiting Periodic Job")
 				return

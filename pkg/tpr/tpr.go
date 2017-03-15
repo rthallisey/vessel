@@ -1,13 +1,12 @@
 package tpr
 
 import (
-	"crypto/tls"
 	"encoding/json"
 	"io/ioutil"
-	"net/http"
 	"os"
 
 	log "github.com/vessel/pkg/logger"
+	"github.com/vessel/pkg/transport"
 )
 
 type TPR struct {
@@ -33,25 +32,11 @@ func NewTPR(url string) *TPR {
 
 func (tpr *TPR) Read() string {
 
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
-	req, _ := http.NewRequest("GET", tpr.Url, nil)
-	client := &http.Client{Transport: tr}
-
-	bearer := "Bearer " + tpr.Token
-	req.Header.Set("Authorization", bearer)
-
-	res, err := client.Do(req)
-	if err != nil {
-		Error.Print("Http request failed")
-		os.Exit(1)
-	}
-	body, _ := ioutil.ReadAll(res.Body)
+	body, status := transport.Get(tpr.Url, tpr.Token)
 	tpr.Body = string(body)
 
 	json.Unmarshal(body, &tpr.Spec)
 	tpr.VesselSpec = tpr.Spec["vesselSpec"].(map[string]interface{})
 
-	return res.Status
+	return status
 }

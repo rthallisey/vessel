@@ -2,41 +2,22 @@ package tpr
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"os"
 
 	log "github.com/vessel/pkg/logger"
 	"github.com/vessel/pkg/transport"
 )
 
-type TPR struct {
-	Url        string
-	Body       string
-	Token      string
-	Spec       map[string]interface{}
-	VesselSpec map[string]interface{}
-}
-
 var Error, _, Info = log.NewLogger()
+var Spec map[string]interface{}
+var VesselSpec map[string]interface{}
 
-func NewTPR(url string) *TPR {
-	b, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
-	if err != nil {
-		Error.Print("Missing token file")
-		os.Exit(1)
-	}
-	token := string(b)
+func Read(url string) (string, map[string]interface{}, map[string]interface{}) {
 
-	return &TPR{Token: token, Url: url}
-}
+	t := transport.NewTransport(url)
+	body, status := t.Get()
 
-func (tpr *TPR) Read() string {
+	json.Unmarshal(body, &Spec)
+	VesselSpec = Spec["vesselSpec"].(map[string]interface{})
 
-	body, status := transport.Get(tpr.Url, tpr.Token)
-	tpr.Body = string(body)
-
-	json.Unmarshal(body, &tpr.Spec)
-	tpr.VesselSpec = tpr.Spec["vesselSpec"].(map[string]interface{})
-
-	return status
+	return status, Spec, VesselSpec
 }

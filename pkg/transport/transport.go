@@ -11,15 +11,32 @@ import (
 
 var Error, _, Info = log.NewLogger()
 
-func Get(url string, token string) ([]byte, string) {
+type Transport struct {
+	Url   string
+	Body  string
+	Token string
+}
+
+func NewTransport(url string) *Transport {
+	b, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
+	if err != nil {
+		Error.Print("Missing token file")
+		os.Exit(1)
+	}
+	token := string(b)
+
+	return &Transport{Token: token, Url: url}
+}
+
+func (t Transport) Get() ([]byte, string) {
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
-	req, _ := http.NewRequest("GET", url, nil)
+	req, _ := http.NewRequest("GET", t.Url, nil)
 	client := &http.Client{Transport: tr}
 
-	bearer := "Bearer " + token
+	bearer := "Bearer " + t.Token
 	req.Header.Set("Authorization", bearer)
 
 	res, err := client.Do(req)

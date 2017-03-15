@@ -18,10 +18,12 @@ type TPR struct {
 	VesselSpec map[string]interface{}
 }
 
+var Error, _, Info = log.NewLogger()
+
 func NewTPR(url string) *TPR {
 	b, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/token")
 	if err != nil {
-		log.Error("Missing token file")
+		Error.Print("Missing token file")
 		os.Exit(1)
 	}
 	token := string(b)
@@ -42,7 +44,7 @@ func (tpr *TPR) Read() string {
 
 	res, err := client.Do(req)
 	if err != nil {
-		log.Error("Http request failed")
+		Error.Print("Http request failed")
 		os.Exit(1)
 	}
 	body, _ := ioutil.ReadAll(res.Body)

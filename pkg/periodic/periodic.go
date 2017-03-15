@@ -3,13 +3,10 @@ package periodic
 import (
 	"time"
 
-	l "github.com/vessel/pkg/logger"
+	log "github.com/vessel/pkg/logger"
 )
 
-var logger = l.NewLogger()
-var Info = logger.Info
-var Warning = logger.Warning
-var Error = logger.Error
+var _, _, Info = log.NewLogger()
 
 type PeriodicJob struct {
 	Time   time.Duration

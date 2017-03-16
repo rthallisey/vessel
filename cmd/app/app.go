@@ -19,7 +19,7 @@ func Run() *int {
 		Info.Print("Starting main loop")
 		elk.CheckContainerCount()
 		time.Sleep(time.Duration(1) * time.Second)
-		a := new(int)
-		return a
 	}
+	a := new(int)
+	return a
 }
